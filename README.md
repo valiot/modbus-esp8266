@@ -63,6 +63,9 @@ V1.02](http://www.modbus.org/docs/Modbus_over_serial_line_V1_02.pdf)
 ## Last Changes
 
 ```diff
+// 3.0.7
++ ModbusRTU: ESP32 task switch lock corrected
++ ModbusIP: Connect slot leak fix
 // 3.0.6
 + Slave/Server: Fix callback called twice on register read
 // 3.0.5

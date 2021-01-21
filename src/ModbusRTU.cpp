@@ -105,7 +105,7 @@ bool ModbusRTU::rawSend(uint8_t slaveId, uint8_t* frame, uint8_t len) {
         delay(1);
     }
 	#ifdef ESP32
-	portENTER_CRITICAL(&mux);
+	vTaskSuspendAll();
 	#endif
     _port->write(slaveId);  	//Send slaveId
     _port->write(frame, len); 	// Send PDU
@@ -115,7 +115,7 @@ bool ModbusRTU::rawSend(uint8_t slaveId, uint8_t* frame, uint8_t len) {
     if (_txPin >= 0)
         digitalWrite(_txPin, _direct?LOW:HIGH);
 	#ifdef ESP32
-    portEXIT_CRITICAL(&mux);
+    xTaskResumeAll();
  	#endif
 	return true;
 }
@@ -143,20 +143,20 @@ bool ModbusRTU::send(uint8_t slaveId, TAddress startreg, cbTransaction cb, void*
 
 void ModbusRTU::task() {
 	#ifdef ESP32
-	portENTER_CRITICAL(&mux);
+	vTaskSuspendAll();
 	#endif
     if (_port->available() > _len) {
         _len = _port->available();
         t = millis();
 		#ifdef ESP32
-    	portEXIT_CRITICAL(&mux);
+    	xTaskResumeAll();
  		#endif
 		return;
     }
 
 	if (_len == 0) {
 		#ifdef ESP32
-    	portEXIT_CRITICAL(&mux);
+    	xTaskResumeAll();
  		#endif
 		if (isMaster) cleanup();
 		return;
@@ -164,12 +164,12 @@ void ModbusRTU::task() {
 
     if (millis() - t < _t) { // Wait data whitespace if there is data
 		#ifdef ESP32
-    	portEXIT_CRITICAL(&mux);
+    	xTaskResumeAll();
  		#endif
 		return;
 	}
 	#ifdef ESP32
-    portEXIT_CRITICAL(&mux);
+    xTaskResumeAll();
  	#endif
 
     uint8_t address = _port->read(); //first byte of frame = address

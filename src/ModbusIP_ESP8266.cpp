@@ -31,7 +31,12 @@ bool ModbusIP::connect(IPAddress ip, uint16_t port) {
 	if (p == -1)
 		return false;
 	tcpclient[p] = new WiFiClient();
-	return tcpclient[p]->connect(ip, port);
+	if (!tcpclient[p]->connect(ip, port?port:MODBUSIP_PORT)) {
+		delete(tcpclient[p]);
+		tcpclient[p] = nullptr;
+		return false;
+	}
+	return true;
 }
 
 uint32_t ModbusIP::eventSource() {		// Returns IP of current processing client query
