@@ -66,10 +66,20 @@ bool ModbusRTUTemplate::rawSend(uint8_t slaveId, uint8_t* frame, uint8_t len) {
 	}
 	Serial.println();
 #endif
+#if defined(MODBUSRTU_REDE)
+	if (_txPin >= 0 || _rxPin >= 0) {
+    	if (_txPin >= 0)
+        	digitalWrite(_txPin, _direct?HIGH:LOW);
+		if (_rxPin >= 0)
+        	digitalWrite(_rxPin, _direct?HIGH:LOW);
+        delayMicroseconds(1000);
+	}
+#else
     if (_txPin >= 0) {
         digitalWrite(_txPin, _direct?HIGH:LOW);
         delayMicroseconds(1000);
     }
+#endif
 	#if defined(ESP32)
 	//vTaskDelay(1);
 	portENTER_CRITICAL(&mux);

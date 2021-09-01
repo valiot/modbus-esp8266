@@ -72,6 +72,11 @@ If defined regisers count will be limited.
 #define MB_MAX_TIME 10
 #define MODBUSRTU_TIMEOUT 1000
 #define MODBUSRTU_MAX_READMS 100
+/*
+#define MODBUSRTU_REDE
+Enable using separate pins for RE DE
+*/
+#define MODBUSRTU_REDE
 
 #define MODBUSAPI_LEGACY
 #define MODBUSAPI_OPTIONAL

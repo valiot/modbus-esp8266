@@ -47,6 +47,27 @@ For more information about Modbus see:
 ## Last Changes
 
 ```diff
+// 4.1.0-DEV
++ ModbusRTU: Add separate RE/DE pins control
+- ModbusRTU: Add direction control pin for Stream
+- ModbusRTU: Static buffer allocation.
+- API: Extend API to allow custom Modbus commands
+- STL: Add Reg count limitation to vector limit of 4000 for ESP (re-check first) 
+- ModbusTLS: ESP32 Server
+- Test: TLS ESP32 Server
+- Test: TLS ESP32 Client
+- Examples: TLS Certificate test Role extension and Alt-Name
+- Examples: TLS Add example explanation
+- Buffer/packet size limitation support
+- Slave/Server: slavePDU use early exit by return where possible
+- Master/Client: Check frame size against header data where possible
+- Master/Client: Additional responce data validation
+- Free global registers and callbacks on remove last Modbus instance
+- Test: Frame accuracy to specefication
+- Test: push/pull functions
+- Test: W5x00 with Ethernet library v1
+- Examples: Basic file operations
+- Examples: Revising
 // 4.0.0
 + ModbusTLS: Modbus TCP Security Client/Server
 + ModbusTLS: ESP8266 Client/Server
@@ -82,24 +103,6 @@ For more information about Modbus see:
 + ModbusRTU: Refactor .task() for more relaibe processing of incoming data
 + API: Declare all callbacks as std::function (for STL)
 + API: Master/Slave => Client/Server according to [PRESS RELEASE](https://modbus.org/docs/Client-ServerPR-07-2020-final.docx.pdf)
-// 4.1.0-DEV
-- ModbusTLS: ESP32 Server
-- Test: TLS ESP32 Server
-- Test: TLS ESP32 Client
-- Examples: TLS Certificate test Role extension and Alt-Name
-- Examples: TLS Add example explanation
-- ModbusRTU: Add direction control pin for Stream
-- ModbusRTU: Static buffer allocation.
-- Buffer/packet size limitation support
-- Slave/Server: slavePDU use early exit by return where possible
-- Master/Client: Check frame size against header data where possible
-- Master/Client: Additional responce data validation
-- Free global registers and callbacks on remove last Modbus instance
-- Test: Frame accuracy to specefication
-- Test: push/pull functions
-- Test: W5x00 with Ethernet library v1
-- Examples: Basic file operations
-- Examples: Revising
 ```
 
 ## Contributions

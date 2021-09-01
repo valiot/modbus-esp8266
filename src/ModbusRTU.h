@@ -12,6 +12,9 @@ class ModbusRTUTemplate : public Modbus {
     protected:
         Stream* _port;
         int16_t   _txPin = -1;
+#if defined(MODBUSRTU_REDE)
+        int16_t   _rxPin = -1;
+#endif
 		bool _direct = true;	// Transmit control logic (true=direct, false=inverse)
 		unsigned int _t;	// inter-frame delay in mS
 		uint32_t t = 0;		// time sience last data byte arrived
@@ -40,6 +43,10 @@ class ModbusRTUTemplate : public Modbus {
 		void setBaudrate(uint32_t baud = -1);
 		template <class T>
 		bool begin(T* port, int16_t txPin = -1, bool direct = true);
+#if defined(MODBUSRTU_REDE)
+		template <class T>
+		bool begin(T* port, int16_t txPin, int16_t rxPin, bool direct);
+#endif
 		bool begin(Stream* port);
         void task();
 		void client() { isMaster = true; };
@@ -69,5 +76,15 @@ bool ModbusRTUTemplate::begin(T* port, int16_t txPin, bool direct) {
     }
     return true;
 }
-
+#if defined(MODBUSRTU_REDE)
+template <class T>
+bool ModbusRTUTemplate::begin(T* port, int16_t txPin, int16_t rxPin, bool direct) {
+	begin(port, txPin, direct);
+	if (rxPin > 0) {
+		_rxPin = rxPin;
+        pinMode(_rxPin, OUTPUT);
+        digitalWrite(_rxPin, _direct?LOW:HIGH);
+	}
+}
+#endif
 class ModbusRTU : public ModbusAPI<ModbusRTUTemplate> {};
