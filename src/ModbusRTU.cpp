@@ -89,8 +89,18 @@ bool ModbusRTUTemplate::rawSend(uint8_t slaveId, uint8_t* frame, uint8_t len) {
     _port->write(newCrc >> 8);	//Send CRC
     _port->write(newCrc & 0xFF);//Send CRC
     _port->flush();
+#if defined(MODBUSRTU_REDE)
+	if (_txPin >= 0 || _rxPin >= 0) {
+    	if (_txPin >= 0)
+        	digitalWrite(_txPin, _direct?LOW:HIGH);
+		if (_rxPin >= 0)
+        	digitalWrite(_rxPin, _direct?LOW:HIGH);
+        delayMicroseconds(1000);
+	}
+#else
     if (_txPin >= 0)
         digitalWrite(_txPin, _direct?LOW:HIGH);
+#endif
 	#if defined(ESP32)
     portEXIT_CRITICAL(&mux);
  	#endif
