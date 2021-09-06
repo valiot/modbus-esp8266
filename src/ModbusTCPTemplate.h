@@ -69,6 +69,7 @@ class ModbusTCPTemplate : public Modbus {
 	bool autoConnectMode = false;
 	uint16_t serverPort = 0;
 	uint16_t defaultPort = MODBUSTCP_PORT;
+	uint32_t timeOutTransaction = MODBUSIP_TIMEOUT;
 	cbModbusResolver resolve = nullptr;
 	TTransaction* searchTransaction(uint16_t id);
 	void cleanupConnections();	// Free clients if not connected
@@ -117,6 +118,8 @@ class ModbusTCPTemplate : public Modbus {
 	#else
 	static IPAddress defaultResolver(const char*) {return IPADDR_NONE;}
 	#endif
+	void setTimeOut(uint32_t timeOutMS);
+	uint32_t getTimeOut();
 };
 
 template <class SERVER, class CLIENT>
@@ -407,7 +410,7 @@ template <class SERVER, class CLIENT>
 void ModbusTCPTemplate<SERVER, CLIENT>::cleanupTransactions() {
 	#if defined(MODBUS_USE_STL)
 	for (auto it = _trans.begin(); it != _trans.end();) {
-		if (millis() - it->timestamp > MODBUSIP_TIMEOUT || it->forcedEvent != Modbus::EX_SUCCESS) {
+		if (millis() - it->timestamp > timeOutTransaction || it->forcedEvent != Modbus::EX_SUCCESS) {
 			Modbus::ResultCode res = (it->forcedEvent != Modbus::EX_SUCCESS)?it->forcedEvent:Modbus::EX_TIMEOUT;
 			if (it->cb)
 				it->cb(res, it->transactionId, nullptr);
@@ -420,7 +423,7 @@ void ModbusTCPTemplate<SERVER, CLIENT>::cleanupTransactions() {
 	size_t i = 0;
 	while (i < _trans.size()) {
 		TTransaction t =  _trans[i];
-		if (millis() - t.timestamp > MODBUSIP_TIMEOUT || t.forcedEvent != Modbus::EX_SUCCESS) {
+		if (millis() - t.timestamp > timeOutTransaction || t.forcedEvent != Modbus::EX_SUCCESS) {
 			Modbus::ResultCode res = (t.forcedEvent != Modbus::EX_SUCCESS)?t.forcedEvent:Modbus::EX_TIMEOUT;
 			if (t.cb)
 				t.cb(res, t.transactionId, nullptr);
@@ -530,4 +533,14 @@ ModbusTCPTemplate<SERVER, CLIENT>::~ModbusTCPTemplate() {
 		delete tcpclient[i];
 		tcpclient[i] = nullptr;
 	}
+}
+
+template <class SERVER, class CLIENT>
+void ModbusTCPTemplate<SERVER, CLIENT>::setTimeOut(uint32_t timeOutMS) {
+	timeOutTransaction = timeOutMS;
+}
+
+template <class SERVER, class CLIENT>
+uint32_t ModbusTCPTemplate<SERVER, CLIENT>::getTimeOut() {
+	return timeOutTransaction;
 }
